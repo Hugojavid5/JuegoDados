@@ -6,7 +6,7 @@ public class Personajes  {
 
     public Personajes(String nombre) {
         this.nombre = nombre;
-        this.vidas = 0;
+        this.vidas = 5;
     }
     public String getNombre() {
         return nombre;
