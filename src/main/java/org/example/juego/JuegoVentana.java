@@ -1,66 +1,70 @@
 package org.example.juego;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import java.util.Random;
 
 /**
- * Clase JuegoVentana donde mostramos el juego
+ * Clase principal donde se muestra el juego
  */
 public class JuegoVentana extends Application {
-    private Juego juego;
-    private Label vidasJugador1;
-    private Label vidasJugador2;
+    private PersonajePrincipal jugador = new PersonajePrincipal("Jugador", 3);
+    private Enemigo enemigo = new Enemigo("Enemigo", 3);
+    private Random random = new Random();
 
     @Override
-    public void start(Stage stage) {
-        Personajes jugador1 = new Personajes("Jugador 1");
-        Personajes jugador2 = new Personajes("Jugador 2");
-        juego = new Juego(jugador1, jugador2);
+    public void start(Stage primaryStage) {
+        Label jugadorLabel = new Label("Vidas del Jugador: " + jugador.getVidas());
+        Label enemigoLabel = new Label("Vidas del Enemigo: " + enemigo.getVidas());
+        Label resultLabel = new Label("Presiona 'Tirar Dados' para comenzar");
 
-        // Inicializamos las etiquetas de vidas
-        vidasJugador1 = new Label(jugador1.getNombre() + ": " + jugador1.getVidas());
-        vidasJugador2 = new Label(jugador2.getNombre() + ": " + jugador2.getVidas());
+        Button rollButton = new Button("Tirar Dados");
+        rollButton.setOnAction(e -> {
+            int dadoJugador = rollDice();
+            int dadoEnemigo = rollDice();
+            String textoResultado;
 
-        // Botón para jugador 1
-        Button btn_tj1 = new Button("Tirar dados Jugador 1");
-        btn_tj1.setOnAction(e -> {
-            juego.jugarTurno(jugador1);  // Aquí debe ser jugador1
-            actualizarPuntajes();
+            if (dadoJugador < dadoEnemigo) {
+                jugador.restarVida();
+                textoResultado = String.format("El Jugador sacó %d y pierde una vida. El Enemigo sacó %d.", dadoJugador, dadoEnemigo);
+            } else if (dadoEnemigo < dadoJugador) {
+                enemigo.restarVida();
+                textoResultado = String.format("El Enemigo sacó %d y pierde una vida. El Jugador sacó %d.", dadoEnemigo, dadoJugador);
+            } else {
+                textoResultado = String.format("Ambos sacaron %d. ¡Es un empate! No se pierde ninguna vida.", dadoJugador);
+            }
+
+            resultLabel.setText(textoResultado);
+            jugadorLabel.setText("Vidas del Jugador: " + jugador.getVidas());
+            enemigoLabel.setText("Vidas del Enemigo: " + enemigo.getVidas());
+            checkGameOver();
         });
 
-        // Botón para jugador 2
-        Button btn_tj2 = new Button("Tirar dados Jugador 2");
-        btn_tj2.setOnAction(e -> {
-            juego.jugarTurno(jugador2);  // Aquí debe ser jugador2
-            actualizarPuntajes();
-        });
-
-        VBox root = new VBox();
-        root.getChildren().addAll(vidasJugador1, btn_tj1, vidasJugador2, btn_tj2);
-
-        Scene scene = new Scene(root, 300, 200);
-        stage.setScene(scene);
-        stage.setTitle("Juego Dados");
-        stage.show();
+        VBox vbox = new VBox(10, jugadorLabel, enemigoLabel, rollButton, resultLabel);
+        Scene scene = new Scene(vbox, 400, 200);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Juego de Dados");
+        primaryStage.show();
     }
 
-    /**
-     * Actualiza las vidas de los jugadores en la interfaz
-     */
-    private void actualizarPuntajes() {
-        vidasJugador1.setText(juego.jugador1.getNombre() + ": " + juego.jugador1.getVidas());
-        vidasJugador2.setText(juego.jugador2.getNombre() + ": " + juego.jugador2.getVidas());
+    private int rollDice() {
+        return random.nextInt(6) + 1; // Número aleatorio entre 1 y 6
     }
 
-    /**
-     * Clase main que sirve como lanzador
-     * @param args
-     */
+    private void checkGameOver() {
+        if (!jugador.estaVivo()) {
+            System.out.println("¡El Jugador se quedó sin vidas! ¡El Enemigo gana!");
+            System.exit(0);
+        } else if (!enemigo.estaVivo()) {
+            System.out.println("¡El Enemigo se quedó sin vidas! ¡El Jugador gana!");
+            System.exit(0);
+        }
+    }
+
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 }

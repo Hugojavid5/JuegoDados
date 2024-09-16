@@ -1,13 +1,14 @@
 package org.example.juego;
 
-public class Personajes  {
+public class Personajes {
     private String nombre;
-    public int vidas;
+    private int vidas;
 
-    public Personajes(String nombre) {
+    public Personajes(String nombre, int vidas) {
         this.nombre = nombre;
-        this.vidas = 5;
+        this.vidas = vidas;
     }
+
     public String getNombre() {
         return nombre;
     }
@@ -15,7 +16,14 @@ public class Personajes  {
     public int getVidas() {
         return vidas;
     }
-    public void agregarPuntos(int puntos) {
-        this.vidas += puntos;
+
+    public void restarVida() {
+        if (vidas > 0) {
+            vidas--;
+        }
+    }
+
+    public boolean estaVivo() {
+        return vidas > 0;
     }
 }
