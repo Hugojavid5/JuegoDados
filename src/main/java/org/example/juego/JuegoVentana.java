@@ -19,42 +19,49 @@ public class JuegoVentana extends Application {
     public void start(Stage primaryStage) {
         Label jugadorLabel = new Label("Vidas del Jugador: " + jugador.getVidas());
         Label enemigoLabel = new Label("Vidas del Enemigo: " + enemigo.getVidas());
-        Label resultLabel = new Label("Presiona 'Tirar Dados' para comenzar");
+        Label resultLabel = new Label(" Tira los dados para empezar");
 
-        Button rollButton = new Button("Tirar Dados");
-        rollButton.setOnAction(e -> {
-            int dadoJugador = rollDice();
-            int dadoEnemigo = rollDice();
+        Button btn_tirar = new Button("Tirar Dados");
+        btn_tirar.setOnAction(e -> {
+            int dadoJugador = numRandom();
+            int dadoEnemigo = numRandom();
             String textoResultado;
 
             if (dadoJugador < dadoEnemigo) {
                 jugador.restarVida();
-                textoResultado = String.format("El Jugador sacó %d y pierde una vida. El Enemigo sacó %d.", dadoJugador, dadoEnemigo);
+                textoResultado = String.format("El Jugador sacó "+dadoJugador +" y pierde una vida. El Enemigo sacó "+dadoEnemigo);
             } else if (dadoEnemigo < dadoJugador) {
                 enemigo.restarVida();
-                textoResultado = String.format("El Enemigo sacó %d y pierde una vida. El Jugador sacó %d.", dadoEnemigo, dadoJugador);
+                textoResultado = String.format("El Enemigo sacó "+dadoEnemigo +" y pierde una vida. El Jugador sacó "+dadoJugador);
             } else {
-                textoResultado = String.format("Ambos sacaron %d. ¡Es un empate! No se pierde ninguna vida.", dadoJugador);
+                textoResultado = String.format("Empate", dadoJugador);
             }
 
             resultLabel.setText(textoResultado);
             jugadorLabel.setText("Vidas del Jugador: " + jugador.getVidas());
             enemigoLabel.setText("Vidas del Enemigo: " + enemigo.getVidas());
-            checkGameOver();
+            ganarPerder();
         });
 
-        VBox vbox = new VBox(10, jugadorLabel, enemigoLabel, rollButton, resultLabel);
+        VBox vbox = new VBox(10, jugadorLabel, enemigoLabel, btn_tirar, resultLabel);
         Scene scene = new Scene(vbox, 400, 200);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Juego de Dados");
         primaryStage.show();
     }
 
-    private int rollDice() {
-        return random.nextInt(6) + 1; // Número aleatorio entre 1 y 6
+    /**
+     * Metodo que devuelve un numero random del 1-6
+     * @return
+     */
+    private int numRandom() {
+        return random.nextInt(6) + 1;
     }
 
-    private void checkGameOver() {
+    /**
+     * Metodo que dice quien gana y quien pierde
+     */
+    private void ganarPerder() {
         if (!jugador.estaVivo()) {
             System.out.println("¡El Jugador se quedó sin vidas! ¡El Enemigo gana!");
             System.exit(0);
@@ -64,6 +71,10 @@ public class JuegoVentana extends Application {
         }
     }
 
+    /**
+     * Metodo lanzador del programa
+     * @param args
+     */
     public static void main(String[] args) {
         launch(args);
     }
