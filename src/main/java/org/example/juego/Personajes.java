@@ -6,7 +6,7 @@ public class Personajes  {
 
     public Personajes(String nombre) {
         this.nombre = nombre;
-        this.vidas = 5;
+        this.vidas = 0;
     }
     public String getNombre() {
         return nombre;
@@ -16,6 +16,6 @@ public class Personajes  {
         return vidas;
     }
     public void agregarPuntos(int puntos) {
-        this.vidas -= puntos;
+        this.vidas += puntos;
     }
 }
